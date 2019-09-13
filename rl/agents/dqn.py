@@ -103,6 +103,7 @@ class DQNAgent(AbstractDQNAgent):
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
                  dueling_type='avg', *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
+        print("Installed the own fork")
 
         # Validate (important) input.
         if hasattr(model.output, '__len__') and len(model.output) > 1:
@@ -261,8 +262,8 @@ class DQNAgent(AbstractDQNAgent):
             terminal1_batch = []
             state1_batch = []
             for e in experiences:
-                state0_batch.append(e.state0)
-                state1_batch.append(e.state1)
+                state0_batch.append(e.state0[0])
+                state1_batch.append(e.state1[0])
                 reward_batch.append(e.reward)
                 action_batch.append(e.action)
                 terminal1_batch.append(0. if e.terminal1 else 1.)
