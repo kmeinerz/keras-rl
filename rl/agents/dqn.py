@@ -66,11 +66,11 @@ class AbstractDQNAgent(Agent):
         return q_values
 
     def compute_q_values(self, state):
-        q_values = self.compute_batch_q_values([state]).flatten()
+        q_values = self.compute_batch_q_values(state).flatten()
         assert q_values.shape == (self.nb_actions,)
         return q_values
 
-    def get_config(self):
+    def get_config(self):   
         return {
             'nb_actions': self.nb_actions,
             'gamma': self.gamma,
@@ -103,7 +103,7 @@ class DQNAgent(AbstractDQNAgent):
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
                  dueling_type='avg', *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
-        print("Installed the own fork")
+        print("Installed the own fork2")
 
         # Validate (important) input.
         if hasattr(model.output, '__len__') and len(model.output) > 1:
