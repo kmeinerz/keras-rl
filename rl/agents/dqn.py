@@ -342,11 +342,11 @@ class DQNAgent(AbstractDQNAgent):
             # Finally, perform a single update on the entire batch. We use a dummy target since
             # the actual loss is computed in a Lambda layer that needs more complex input. However,
             # it is still useful to know the actual target to compute metrics properly.
-            ins = [state0_batch] if type(self.model.input) is not list else state0_batch
-            print(state0_batch.shape)
-            print(targets.shape)
-            print(masks.shape)
-            print([targets, masks])
+            ins = [state0_batch[0]] if type(self.model.input) is not list else state0_batch[0]
+            # print(state0_batch.shape)
+            # print(targets.shape)
+            # print(masks.shape)
+            # print([targets, masks])
             metrics = self.trainable_model.train_on_batch(ins + [targets, masks], [dummy_targets, targets])
             metrics = [metric for idx, metric in enumerate(metrics) if idx not in (1, 2)]  # throw away individual losses
             metrics += self.policy.metrics
