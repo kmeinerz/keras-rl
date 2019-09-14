@@ -233,9 +233,9 @@ class DQNAgent(AbstractDQNAgent):
         ###
         print(state)
         print(state[0])
-        print(state[0].shape)
+        print(state[0].shape,"sdfgsdthjdfg")
         if self.enable_multi_observation:
-            q_values = self.compute_batch_q_values(state)
+            q_values = self.compute_batch_q_values(state[0])
         else:
             q_values = self.compute_q_values(state)
         ###
