@@ -101,7 +101,7 @@ class DQNAgent(AbstractDQNAgent):
 
     """
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
-                 dueling_type='avg', *args, **kwargs):
+                 dueling_type='avg', enable_multi_observation=False, *args, **kwargs):###
         super(DQNAgent, self).__init__(*args, **kwargs)
         print("Installed the own fork2")
 
@@ -115,6 +115,7 @@ class DQNAgent(AbstractDQNAgent):
         self.enable_double_dqn = enable_double_dqn
         self.enable_dueling_network = enable_dueling_network
         self.dueling_type = dueling_type
+        self.enable_multi_observation = enable_multi_observation###
         if self.enable_dueling_network:
             # get the second last layer of the model, abandon the last layer
             layer = model.layers[-2]
@@ -158,6 +159,7 @@ class DQNAgent(AbstractDQNAgent):
         config['enable_double_dqn'] = self.enable_double_dqn
         config['dueling_type'] = self.dueling_type
         config['enable_dueling_network'] = self.enable_dueling_network
+        config['enable_multi_observations'] = self.enable_multi_observation###
         config['model'] = get_object_config(self.model)
         config['policy'] = get_object_config(self.policy)
         config['test_policy'] = get_object_config(self.test_policy)
@@ -226,11 +228,22 @@ class DQNAgent(AbstractDQNAgent):
     def forward(self, observation):
         # Select an action.
         state = self.memory.get_recent_state(observation)
-        q_values = self.compute_q_values(state)
-        if self.training:
-            action = self.policy.select_action(q_values=q_values)
+        ###
+        if self.enable_multi_observation:
+            q_values = self.compute_batch_q_values(state)
         else:
-            action = self.test_policy.select_action(q_values=q_values)
+            q_values = self.compute_q_values(state)
+        ###
+        if self.enable_multi_observation:
+            if self.training:
+                action = self.policy.select_batch_action(q_values=q_values)
+            else:
+                action = self.test_policy.select_batch_action(q_values=q_values)
+        else:
+            if self.training:
+                action = self.policy.select_action(q_values=q_values)
+            else:
+                action = self.test_policy.select_action(q_values=q_values)
 
         # Book-keeping.
         self.recent_observation = observation

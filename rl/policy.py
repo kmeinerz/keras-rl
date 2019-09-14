@@ -83,6 +83,15 @@ class LinearAnnealedPolicy(Policy):
         setattr(self.inner_policy, self.attr, self.get_current_value())
         return self.inner_policy.select_action(**kwargs)
 
+    def select_batch_action(self, **kwargs):
+        """Choose an action from batch to perform
+
+        # Returns
+            Action to take (int)
+        """
+        setattr(self.inner_policy, self.attr, self.get_current_value())
+        return self.inner_policy.select_batch_action(**kwargs)
+
     @property
     def metrics_names(self):
         """Return names of metrics
@@ -167,7 +176,25 @@ class EpsGreedyQPolicy(Policy):
         else:
             action = np.argmax(q_values)
         return action
+    ###
+    def select_batch_action(self, q_values):
+        """Return the selected action from a batch of q values
 
+        # Arguments
+            q_values (np.ndarray): List of the estimations of Q for each action
+
+        # Returns
+            Selection action
+        """
+        assert q_values.ndim == 2
+        nb_actions = q_values.size
+
+        if np.random.uniform() < self.eps:
+            action = np.random.randint(0, nb_actions)
+        else:
+            action = np.argmax(q_values)
+        return action
+    ###
     def get_config(self):
         """Return configurations of EpsGreedyQPolicy
 
