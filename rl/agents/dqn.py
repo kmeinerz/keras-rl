@@ -283,10 +283,7 @@ class DQNAgent(AbstractDQNAgent):
 
             # Prepare and validate parameters.
             state0_batch = self.process_state_batch(state0_batch)
-            print(len(state1_batch),"QQQQQQQQQQQQQQQ")
-            print(state1_batch[0].shape)
             state1_batch = self.process_state_batch(state1_batch)
-            print(len(state1_batch))
             terminal1_batch = np.array(terminal1_batch)
             reward_batch = np.array(reward_batch)
             assert reward_batch.shape == (self.batch_size,)
@@ -312,11 +309,16 @@ class DQNAgent(AbstractDQNAgent):
                 # Compute the q_values given state1, and extract the maximum for each sample in the batch.
                 # We perform this prediction on the target_model instead of the model for reasons
                 # outlined in Mnih (2015). In short: it makes the algorithm more stable.
-                print(len(state1_batch),"qqqqqqqqqqqqqqqqqq2")
-                target_q_values = self.target_model.predict_on_batch(state1_batch[0])
-                print(target_q_values.shape)
-                #assert target_q_values.shape == (self.batch_size, self.nb_actions)
-                q_batch = np.max(target_q_values, axis=1).flatten()
+                if self.enable_multi_observation:
+                    q_batch = np.array([])
+                    for i in range(self.batch_size):
+                        q_batch = np.append(q_batch,np.max(self.target_model.predict_on_batch(state1_batch[i])))
+
+                else:
+                    target_q_values = self.target_model.predict_on_batch(state1_batch)
+                    assert target_q_values.shape == (self.batch_size, self.nb_actions)
+                    q_batch = np.max(target_q_values, axis=1).flatten()
+            
             print(q_batch.shape)
             assert q_batch.shape == (self.batch_size,)
 
