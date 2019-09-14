@@ -335,7 +335,7 @@ class DQNAgent(AbstractDQNAgent):
             for idx, (target, mask, R, action) in enumerate(zip(targets, masks, Rs, action_batch)):
                 target[action%self.nb_actions] = R  # update action with estimated accumulated reward
                 dummy_targets[idx] = R
-                mask[action] = 1.  # enable loss for this specific action
+                mask[action%self.nb_actions] = 1.  # enable loss for this specific action
             targets = np.array(targets).astype('float32')
             masks = np.array(masks).astype('float32')
 
