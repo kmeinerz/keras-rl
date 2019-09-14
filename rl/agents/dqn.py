@@ -254,7 +254,13 @@ class DQNAgent(AbstractDQNAgent):
     def backward(self, reward, terminal):
         # Store most recent experience in memory.
         if self.step % self.memory_interval == 0:
+            if self.enable_multi_observation:
+            self.memory.append(self.recent_observation[self.action//self.nb_actions,:,:], self.recent_action%self.nb_actions, reward, terminal,
+                               training=self.training) reward, terminal,
+                               training=self.training)
+            else:
             self.memory.append(self.recent_observation, self.recent_action, reward, terminal,
+                               training=self.training) reward, terminal,
                                training=self.training)
 
         metrics = [np.nan for _ in self.metrics_names]
@@ -309,15 +315,15 @@ class DQNAgent(AbstractDQNAgent):
                 # Compute the q_values given state1, and extract the maximum for each sample in the batch.
                 # We perform this prediction on the target_model instead of the model for reasons
                 # outlined in Mnih (2015). In short: it makes the algorithm more stable.
-                if self.enable_multi_observation:
-                    q_batch = np.array([])
-                    for i in range(self.batch_size):
-                        q_batch = np.append(q_batch,np.max(self.target_model.predict_on_batch(state1_batch[i])))
+                # if self.enable_multi_observation:
+                #     q_batch = np.array([])
+                #     for i in range(self.batch_size):
+                #         q_batch = np.append(q_batch,np.max(self.target_model.predict_on_batch(state1_batch[i])))
 
-                else:
-                    target_q_values = self.target_model.predict_on_batch(state1_batch)
-                    assert target_q_values.shape == (self.batch_size, self.nb_actions)
-                    q_batch = np.max(target_q_values, axis=1).flatten()
+                # else:
+                target_q_values = self.target_model.predict_on_batch(state1_batch)
+                assert target_q_values.shape == (self.batch_size, self.nb_actions)
+                q_batch = np.max(target_q_values, axis=1).flatten()
             
             assert q_batch.shape == (self.batch_size,)
 
@@ -347,6 +353,11 @@ class DQNAgent(AbstractDQNAgent):
             # print(targets.shape)
             # print(masks.shape)
             # print([targets, masks])
+            # if self.enable_multi_observation:
+            #     metrics = np.zeros((self.batch_size, 4))
+            #     for i in range(self.batch_size):
+            #         metrics[i,:] = self.trainable_model.train_on_batch(ins + [targets, masks], [dummy_targets, targets])
+            # else:
             metrics = self.trainable_model.train_on_batch(ins + [targets, masks], [dummy_targets, targets])
             metrics = [metric for idx, metric in enumerate(metrics) if idx not in (1, 2)]  # throw away individual losses
             metrics += self.policy.metrics
