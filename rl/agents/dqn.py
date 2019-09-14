@@ -286,7 +286,7 @@ class DQNAgent(AbstractDQNAgent):
             print(len(state1_batch),"QQQQQQQQQQQQQQQ")
             print(state1_batch[0].shape)
             state1_batch = self.process_state_batch(state1_batch)
-            print(len(state1_batch)
+            print(len(state1_batch))
             terminal1_batch = np.array(terminal1_batch)
             reward_batch = np.array(reward_batch)
             assert reward_batch.shape == (self.batch_size,)
