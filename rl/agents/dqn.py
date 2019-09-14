@@ -61,7 +61,6 @@ class AbstractDQNAgent(Agent):
 
     def compute_batch_q_values(self, state_batch):
         batch = self.process_state_batch(state_batch)
-        print(batch.shape)
         q_values = self.model.predict_on_batch(batch)
         assert q_values.shape == (len(state_batch), self.nb_actions)
         return q_values
@@ -228,14 +227,10 @@ class DQNAgent(AbstractDQNAgent):
 
     def forward(self, observation):
         # Select an action.
-        print(observation)
         state = self.memory.get_recent_state(observation)
         ###
-        print(state)
-        print(state[0])
-        print(state[0].shape,"sdfgsdthjdfg")
         if self.enable_multi_observation:
-            q_values = self.compute_batch_q_values(state[0])
+            q_values = self.compute_batch_q_values(state[0])###
         else:
             q_values = self.compute_q_values(state)
         ###
@@ -288,7 +283,9 @@ class DQNAgent(AbstractDQNAgent):
 
             # Prepare and validate parameters.
             state0_batch = self.process_state_batch(state0_batch)
+            print(state1_batch,"QQQQQQQQQQQQQQQ")
             state1_batch = self.process_state_batch(state1_batch)
+            print(state1_batch)
             terminal1_batch = np.array(terminal1_batch)
             reward_batch = np.array(reward_batch)
             assert reward_batch.shape == (self.batch_size,)
@@ -314,6 +311,7 @@ class DQNAgent(AbstractDQNAgent):
                 # Compute the q_values given state1, and extract the maximum for each sample in the batch.
                 # We perform this prediction on the target_model instead of the model for reasons
                 # outlined in Mnih (2015). In short: it makes the algorithm more stable.
+                print(state1_batch,"qqqqqqqqqqqqqqqqqq")
                 target_q_values = self.target_model.predict_on_batch(state1_batch)
                 assert target_q_values.shape == (self.batch_size, self.nb_actions)
                 q_batch = np.max(target_q_values, axis=1).flatten()
