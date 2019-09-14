@@ -61,6 +61,7 @@ class AbstractDQNAgent(Agent):
 
     def compute_batch_q_values(self, state_batch):
         batch = self.process_state_batch(state_batch)
+        print(batch.shape)
         q_values = self.model.predict_on_batch(batch)
         assert q_values.shape == (len(state_batch), self.nb_actions)
         return q_values
