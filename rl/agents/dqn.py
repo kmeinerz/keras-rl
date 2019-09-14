@@ -319,7 +319,6 @@ class DQNAgent(AbstractDQNAgent):
                     assert target_q_values.shape == (self.batch_size, self.nb_actions)
                     q_batch = np.max(target_q_values, axis=1).flatten()
             
-            print(q_batch.shape)
             assert q_batch.shape == (self.batch_size,)
 
             targets = np.zeros((self.batch_size, self.nb_actions))
@@ -334,7 +333,7 @@ class DQNAgent(AbstractDQNAgent):
             assert discounted_reward_batch.shape == reward_batch.shape
             Rs = reward_batch + discounted_reward_batch
             for idx, (target, mask, R, action) in enumerate(zip(targets, masks, Rs, action_batch)):
-                target[action] = R  # update action with estimated accumulated reward
+                target[action%self.nb_actions] = R  # update action with estimated accumulated reward
                 dummy_targets[idx] = R
                 mask[action] = 1.  # enable loss for this specific action
             targets = np.array(targets).astype('float32')
