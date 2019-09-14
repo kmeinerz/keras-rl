@@ -317,6 +317,7 @@ class DQNAgent(AbstractDQNAgent):
                 print(target_q_values.shape)
                 #assert target_q_values.shape == (self.batch_size, self.nb_actions)
                 q_batch = np.max(target_q_values, axis=1).flatten()
+            print(q_batch.shape)
             assert q_batch.shape == (self.batch_size,)
 
             targets = np.zeros((self.batch_size, self.nb_actions))
