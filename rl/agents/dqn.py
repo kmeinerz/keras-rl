@@ -255,7 +255,7 @@ class DQNAgent(AbstractDQNAgent):
         # Store most recent experience in memory.
         if self.step % self.memory_interval == 0:
             if self.enable_multi_observation:
-                self.memory.append(self.recent_observation[self.action//self.nb_actions,:,:], self.recent_action%self.nb_actions, reward, terminal,
+                self.memory.append(self.recent_observation[self.recent_action//self.nb_actions,:,:], self.recent_action%self.nb_actions, reward, terminal,
                                 training=self.training)
             else:
                 self.memory.append(self.recent_observation, self.recent_action, reward, terminal,
