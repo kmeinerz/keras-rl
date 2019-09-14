@@ -228,8 +228,10 @@ class DQNAgent(AbstractDQNAgent):
 
     def forward(self, observation):
         # Select an action.
+        print(observation.shape)
         state = self.memory.get_recent_state(observation)
         ###
+        print(state.shape)
         if self.enable_multi_observation:
             q_values = self.compute_batch_q_values(state)
         else:
