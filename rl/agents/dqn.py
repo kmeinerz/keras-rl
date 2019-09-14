@@ -228,7 +228,7 @@ class DQNAgent(AbstractDQNAgent):
 
     def forward(self, observation):
         # Select an action.
-        print(observation.shape)
+        print(observation)
         state = self.memory.get_recent_state(observation)
         ###
         print(state.shape)
